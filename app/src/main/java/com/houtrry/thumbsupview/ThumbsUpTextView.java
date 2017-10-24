@@ -2,7 +2,9 @@ package com.houtrry.thumbsupview;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,17 +25,42 @@ public class ThumbsUpTextView extends View {
 
     private static final String TAG = ThumbsUpTextView.class.getSimpleName();
 
-    private float mTextSize = 36;
+    /**
+     * 文字的大小
+     */
+    private float mTextSize = 45;
+    /**
+     * 文字的颜色
+     */
     private int mTextColor = Color.BLACK;
+    /**
+     * 文字间的间隔大小
+     */
+    private float mTextScaleX = 10;
     private Paint mTextPaint;
 
+    /**
+     * 数字的对齐方式, 左对齐
+     */
     private static final int TYPE_LEFT = 0x0001;
+    /**
+     * 数字的对齐方式, 右对齐
+     */
     private static final int TYPE_RIGHT = 0x0002;
-    private int mType = TYPE_LEFT;
+    /**
+     * 数字的对齐方式, 默认左对齐
+     */
+    private int mAlignType = TYPE_RIGHT;
     private int mCurrentValue = 109;
     private String mTextStr = "";
     private String mNewTextStr = "";
+    /**
+     * 动画时长, 默认400ms
+     */
+    private long mAnimatorDuration = 400;
     private ObjectAnimator mObjectAnimator;
+    private TimeInterpolator mTimeInterpolator = new LinearOutSlowInInterpolator();
+
     @Keep
     private float progress = 0.0f;
     private int mWidth;
@@ -58,8 +85,9 @@ public class ThumbsUpTextView extends View {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-
     /**
+     * 点赞或取消点赞
+     *
      * @param isUp TRUE:点赞;FALSE:取消点赞
      */
     public void thumbsUp(boolean isUp) {
@@ -68,15 +96,94 @@ public class ThumbsUpTextView extends View {
         startAnimator(isUp);
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        initPaint(context);
-        mTextStr = String.valueOf(mCurrentValue);
+    /**
+     * 设置文字大小
+     *
+     * @param textSize 文字大小
+     */
+    public void setTextSize(float textSize) {
+        mTextSize = textSize;
+        mTextPaint.setTextSize(mTextSize);
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    private void initPaint(Context context) {
-        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextSize(mTextSize);
+    /**
+     * 设置文字颜色
+     *
+     * @param textColor 文字颜色
+     */
+    public void setTextColor(int textColor) {
+        mTextColor = textColor;
         mTextPaint.setColor(mTextColor);
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
+    /**
+     * 设置文字对齐方式
+     *
+     * @param alignType 文字对齐方式
+     */
+    public void setAlignType(int alignType) {
+        mAlignType = alignType;
+        checkAlignType();
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
+    /**
+     * 设置当前的值
+     *
+     * @param currentValue
+     */
+    public void setCurrentValue(int currentValue) {
+        if (currentValue != mCurrentValue) {
+            boolean isUp = currentValue > mCurrentValue;
+            mCurrentValue = currentValue;
+            mNewTextStr = String.valueOf(mCurrentValue);
+            startAnimator(isUp);
+        }
+    }
+
+    /**
+     * 设置动画的时长
+     *
+     * @param animatorDuration 动画的时长
+     */
+    public void setAnimatorDuration(long animatorDuration) {
+        mAnimatorDuration = animatorDuration;
+        if (mObjectAnimator != null) {
+            mObjectAnimator.setDuration(mAnimatorDuration);
+        }
+    }
+
+    /**
+     * 设置动画的加速模式
+     *
+     * @param timeInterpolator
+     */
+    public void setTimeInterpolator(TimeInterpolator timeInterpolator) {
+        mTimeInterpolator = timeInterpolator;
+        if (mObjectAnimator != null) {
+            mObjectAnimator.setInterpolator(mTimeInterpolator);
+        }
+    }
+
+    /**
+     * 设置文字间的间隔
+     *
+     * @param textScaleX 文字间的间隔
+     */
+    public void setTextScaleX(float textScaleX) {
+        mTextScaleX = textScaleX;
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
+    /**
+     * 获取当前的值
+     *
+     * @return 当前的值
+     */
+    public int getCurrentValue() {
+        return mCurrentValue;
     }
 
     @Override
@@ -125,44 +232,101 @@ public class ThumbsUpTextView extends View {
         return result;
     }
 
+    private void init(Context context, AttributeSet attrs) {
+        initAttrs(context, attrs);
+        initPaint(context);
+        mTextStr = String.valueOf(mCurrentValue);
+    }
 
-    private float mCurrentLeft = 0;
-    private float mTextScaleX = 10;
+    private void initPaint(Context context) {
+        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setColor(mTextColor);
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThumbsUpTextView);
+        mTextSize = typedArray.getDimensionPixelSize(R.styleable.ThumbsUpTextView_text_size, 45);
+        mTextColor = typedArray.getColor(R.styleable.ThumbsUpTextView_text_color, Color.BLACK);
+        mCurrentValue = typedArray.getInteger(R.styleable.ThumbsUpTextView_default_value, 109);
+        mAlignType = typedArray.getInt(R.styleable.ThumbsUpTextView_align_type, TYPE_LEFT);
+        mTextScaleX = typedArray.getDimensionPixelSize(R.styleable.ThumbsUpTextView_text_scale_x, 0);
+        mAnimatorDuration = typedArray.getInteger(R.styleable.ThumbsUpTextView_animator_duration, 400);
+        typedArray.recycle();
+        mTextStr = String.valueOf(mCurrentValue);
+        checkAlignType();
+    }
 
     private float mTextY = 0;
     private float mNewTextY = 0;
-    private void drawText(Canvas canvas) {
-        int textCharArrayLength = mTextStr.length();
-        int newTextCharArrayLength = mNewTextStr.length();
-        mCurrentLeft = getPaddingLeft();
-        int maxLength = Math.max(textCharArrayLength, newTextCharArrayLength);
-        for (int i = 0; i < maxLength; i++) {
-            String textAtI = getStringAt(mTextStr, i);
-            String newTextAtI = getStringAt(mNewTextStr, i);
-            if (textAtI.equalsIgnoreCase(newTextAtI)) {
-                mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
-                mTextY = mHeight * 0.5f + mTextRect.height()*0.5f;
-                canvas.drawText(textAtI, mCurrentLeft, mTextY, mTextPaint);
-            } else {
-                mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
-                mTextY = mHeight * 0.5f + mTextRect.height()*0.5f + mHeight * progress;
-                canvas.drawText(textAtI, mCurrentLeft, mTextY, mTextPaint);
 
-                mTextPaint.getTextBounds(newTextAtI, 0, newTextAtI.length(), mTextRect);
-                mNewTextY = mHeight * (progress < 0? 1.5f : -0.5f) + mTextRect.height()*0.5f + mHeight * progress;
-                canvas.drawText(newTextAtI, mCurrentLeft, mNewTextY, mTextPaint);
-            }
-            mCurrentLeft = mCurrentLeft + Math.max(mTextPaint.measureText(textAtI), mTextPaint.measureText(newTextAtI)) + mTextScaleX;
+    /**
+     * 绘制文字
+     * @param canvas
+     */
+    private void drawText(Canvas canvas) {
+        String textStr;
+        String newTextStr;
+        if (mAlignType == TYPE_LEFT) {
+            textStr = mTextStr;
+            newTextStr = mNewTextStr;
+        } else {
+            //如果是右对齐, 先反转文字
+            textStr = reverseString(mTextStr);
+            newTextStr = reverseString(mNewTextStr);
         }
 
+        int textCharArrayLength = textStr.length();
+        int newTextCharArrayLength = newTextStr.length();
+        int maxLength = Math.max(textCharArrayLength, newTextCharArrayLength);
+        canvas.save();
+        if (mAlignType == TYPE_LEFT) {
+            canvas.translate(getPaddingLeft(), 0);
+        } else {
+            canvas.translate(mWidth, 0);
+            canvas.translate(-getPaddingRight(), 0);
+        }
+        String textAtI;
+        String newTextAtI;
+        float textWidth;
+        for (int i = 0; i < maxLength; i++) {
+            textAtI = getStringAt(textStr, i);
+            newTextAtI = getStringAt(newTextStr, i);
+            textWidth = Math.max(mTextPaint.measureText(textAtI), mTextPaint.measureText(newTextAtI)) + mTextScaleX;
+            if (mAlignType == TYPE_RIGHT) {
+                canvas.translate(textWidth * (-1), 0);
+            }
+
+            if (textAtI.equalsIgnoreCase(newTextAtI)) {
+                //如果两个数字的第i个位置上数字相同, 则, 这个位置的Y值不需要变化, 新的数字也不需要画出
+                mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
+                mTextY = mHeight * 0.5f + mTextRect.height() * 0.5f;
+                canvas.drawText(textAtI, 0, mTextY, mTextPaint);
+            } else {
+                mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
+                mTextY = mHeight * 0.5f + mTextRect.height() * 0.5f + mHeight * progress;
+                canvas.drawText(textAtI, 0, mTextY, mTextPaint);
+                mTextPaint.getTextBounds(newTextAtI, 0, newTextAtI.length(), mTextRect);
+                mNewTextY = mHeight * (progress < 0 ? 1.5f : -0.5f) + mTextRect.height() * 0.5f + mHeight * progress;
+                canvas.drawText(newTextAtI, 0, mNewTextY, mTextPaint);
+            }
+            if (mAlignType == TYPE_LEFT) {
+                canvas.translate(textWidth, 0);
+            }
+        }
+        canvas.restore();
     }
 
+    /**
+     * 开启动画
+     * @param isUp true:点赞动画;false:取消点赞的动画.
+     */
     private void startAnimator(boolean isUp) {
         if (mObjectAnimator != null && mObjectAnimator.isRunning()) {
             mObjectAnimator.cancel();
         }
         mObjectAnimator = ObjectAnimator.ofFloat(this, "progress", 0, isUp ? -1f : 1f);
-        mObjectAnimator.setDuration(500);
+        mObjectAnimator.setDuration(mAnimatorDuration);
         mObjectAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
@@ -172,6 +336,7 @@ public class ThumbsUpTextView extends View {
             @Override
             public void onAnimationEnd(Animator animator) {
                 mTextStr = mNewTextStr;
+                progress = 0;
             }
 
             @Override
@@ -184,14 +349,39 @@ public class ThumbsUpTextView extends View {
 
             }
         });
-        mObjectAnimator.setInterpolator(new LinearOutSlowInInterpolator());
+        mObjectAnimator.setInterpolator(mTimeInterpolator);
         mObjectAnimator.start();
     }
 
+    /**
+     * 检查对齐类型是否是TYPE_LEFT或者TYPE_RIGHT, 如果不是, 抛出异常
+     */
+    private void checkAlignType() {
+        if (mAlignType != TYPE_LEFT && mAlignType != TYPE_RIGHT) {
+            throw new IllegalArgumentException("the type is only support TYPE_LEFT and TYPE_RIGHT");
+        }
+    }
+
+    /**
+     * 获取字符串中指定位置的单个字符串
+     * @param text 源字符串
+     * @param index 位置
+     * @return 指定位置的单个字符串
+     */
     public static String getStringAt(String text, int index) {
         if (index >= text.length()) {
             return "";
         }
         return String.valueOf(text.charAt(index));
+    }
+
+    /**
+     * 反转字符串
+     * @param text 源字符串
+     * @return 反转后的字符串
+     */
+    public static String reverseString(String text) {
+        StringBuilder sb = new StringBuilder(text);
+        return sb.reverse().toString();
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ThumbsUpTextView">
+        <!--文字大小-->
+        <attr name="text_size" format="dimension"/>
+        <!--文字颜色-->
+        <attr name="text_color" format="color"/>
+        <!--默认值-->
+        <attr name="default_value" format="integer"/>
+        <!--文字对齐类型-->
+        <attr name="align_type">
+            <!--左对齐-->
+            <flag name="TYPE_LEFT" value="0x0001"/>
+            <!--右对齐-->
+            <flag name="TYPE_RIGHT" value="0x0002"/>
+        </attr>
+        <!--文字与文字间的间隔-->
+        <attr name="text_scale_x" format="dimension"/>
+        <!--动画时长-->
+        <attr name="animator_duration" format="integer"/>
+    </declare-styleable>
+</resources>
