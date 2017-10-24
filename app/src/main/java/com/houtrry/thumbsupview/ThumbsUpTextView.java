@@ -13,6 +13,7 @@ import android.support.annotation.Keep;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -91,6 +92,10 @@ public class ThumbsUpTextView extends View {
      * @param isUp TRUE:点赞;FALSE:取消点赞
      */
     public void thumbsUp(boolean isUp) {
+        if (mObjectAnimator != null && mObjectAnimator.isRunning()) {
+            Log.d(TAG, "thumbsUp: now, the animator is running, please wait a moment");
+            return;
+        }
         mCurrentValue = mCurrentValue + (isUp ? 1 : (-1));
         mNewTextStr = String.valueOf(mCurrentValue);
         startAnimator(isUp);
@@ -202,7 +207,11 @@ public class ThumbsUpTextView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+//        mTextPaint.setColor(mTextColor);
         drawText(canvas);
+//        mTextPaint.setColor(Color.RED);
+//        mTextPaint.setStrokeWidth(2);
+//        canvas.drawLine(0, mHeight*0.5f, mWidth, mHeight*0.5f, mTextPaint);
     }
 
     private int measureWidth(int widthMeasureSpec) {

@@ -2,8 +2,8 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:thumbs="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
@@ -14,16 +14,16 @@
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:background="@android:color/holo_blue_light"
-        thumbs:text_size="16sp"
-        thumbs:text_color="@color/colorAccent"
-        thumbs:default_value="999"
-        thumbs:align_type="TYPE_LEFT"
-        thumbs:text_scale_x="1px"
-        thumbs:animator_duration="1000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        thumbs:align_type="TYPE_LEFT"
+        thumbs:animator_duration="1000"
+        thumbs:default_value="999"
+        thumbs:text_color="@color/colorAccent"
+        thumbs:text_scale_x="1px"
+        thumbs:text_size="16sp"/>
 
     <Button
         android:id="@+id/thumbsUp"
@@ -36,7 +36,7 @@
         android:textSize="15sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/thumbsUpTextView"
+        app:layout_constraintTop_toBottomOf="@+id/thumbsUpTextView"
         />
 
     <Button
@@ -50,7 +50,38 @@
         android:textSize="15sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/thumbsUp"
+        app:layout_constraintTop_toBottomOf="@+id/thumbsUp"
         />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="@android:color/holo_green_light"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/thumbsDown">
+
+        <com.houtrry.thumbsupview.ThumbsUpView
+            android:id="@+id/thumbsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp"
+            />
+
+        <com.houtrry.thumbsupview.ThumbsUpTextView
+            android:id="@+id/thumbsUpTextViewLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            thumbs:align_type="TYPE_LEFT"
+            thumbs:animator_duration="1000"
+            thumbs:default_value="999"
+            thumbs:text_color="@color/colorAccent"
+            thumbs:text_scale_x="1px"
+            thumbs:text_size="16sp"/>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
