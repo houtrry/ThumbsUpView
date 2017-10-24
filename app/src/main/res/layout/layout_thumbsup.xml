@@ -19,6 +19,6 @@
         android:id="@+id/iv_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_messages_like_selected"/>
+        android:src="@drawable/ic_messages_like_selector"/>
 
 </LinearLayout>

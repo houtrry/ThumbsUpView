@@ -14,6 +14,6 @@ public class CosInterpolator implements Interpolator {
 
     @Override
     public float getInterpolation(float input) {
-        return (float) (1.0 + 0.4f * Math.sin(input*2*Math.PI + Math.PI));
+        return (float) (1.0 + 0.2f * Math.sin(input*2*Math.PI + Math.PI));
     }
 }
