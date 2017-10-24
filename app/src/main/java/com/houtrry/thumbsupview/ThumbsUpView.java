@@ -51,4 +51,7 @@ public class ThumbsUpView extends FrameLayout {
 
     }
 
+    private void changeImageNoAnimator() {
+
+    }
 }
