@@ -97,6 +97,14 @@ public class ThumbsUpImageView extends FrameLayout {
                 }
             }
         });
+//        likeObjectAnimatorAlpha.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationRepeat(Animator animation) {
+//                super.onAnimationRepeat(animation);
+//                Log.d(TAG, "onAnimationUpdate: 天啊撸, 现在是个好机会~");
+//                mIvLikeView.setSelected(isUp);
+//            }
+//        });
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mIvLikeView, likeObjectAnimatorScaleX, likeObjectAnimatorScaleY);
 
         AnimatorSet animatorSetLike = new AnimatorSet ();
