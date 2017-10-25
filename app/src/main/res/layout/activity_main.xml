@@ -76,10 +76,10 @@
         <com.houtrry.thumbsupview.ThumbsUpTextView
             android:id="@+id/thumbsUpTextViewLike"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="2dp"
             thumbs:align_type="TYPE_LEFT"
-            thumbs:animator_duration="1000"
+            thumbs:animator_duration="500"
             thumbs:default_value="999"
             thumbs:text_color="@color/colorAccent"
             thumbs:text_scale_x="1px"

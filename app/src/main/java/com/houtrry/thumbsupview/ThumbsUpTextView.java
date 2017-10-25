@@ -194,6 +194,7 @@ public class ThumbsUpTextView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.d(TAG, "onMeasure: ----->");
         setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
     }
 
@@ -215,6 +216,7 @@ public class ThumbsUpTextView extends View {
     }
 
     private int measureWidth(int widthMeasureSpec) {
+        Log.d(TAG, "measureWidth: ");
         int result = 0;
         int mode = MeasureSpec.getMode(widthMeasureSpec);
         int size = MeasureSpec.getSize(widthMeasureSpec);
@@ -223,6 +225,7 @@ public class ThumbsUpTextView extends View {
         } else {
             result = (int) (mTextPaint.measureText(mTextStr) + getPaddingLeft() + getPaddingRight() + 0.5f + (mTextStr.length() - 1) * mTextScaleX);
         }
+        Log.d(TAG, "measureWidth: result: "+result);
         return result;
     }
 
@@ -311,12 +314,16 @@ public class ThumbsUpTextView extends View {
                 mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
                 mTextY = mHeight * 0.5f + mTextRect.height() * 0.5f;
                 canvas.drawText(textAtI, 0, mTextY, mTextPaint);
+                mTextPaint.setAlpha(255);
             } else {
                 mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
                 mTextY = mHeight * 0.5f + mTextRect.height() * 0.5f + mHeight * progress;
+                mTextPaint.setAlpha((int) ((1f- Math.abs(progress))*255));
                 canvas.drawText(textAtI, 0, mTextY, mTextPaint);
+
                 mTextPaint.getTextBounds(newTextAtI, 0, newTextAtI.length(), mTextRect);
                 mNewTextY = mHeight * (progress < 0 ? 1.5f : -0.5f) + mTextRect.height() * 0.5f + mHeight * progress;
+                mTextPaint.setAlpha((int) (Math.abs(progress)*255));
                 canvas.drawText(newTextAtI, 0, mNewTextY, mTextPaint);
             }
             if (mAlignType == TYPE_LEFT) {
@@ -346,6 +353,7 @@ public class ThumbsUpTextView extends View {
             public void onAnimationEnd(Animator animator) {
                 mTextStr = mNewTextStr;
                 progress = 0;
+                mTextPaint.setAlpha((int) ((1f- Math.abs(progress))*255));
             }
 
             @Override
