@@ -87,6 +87,10 @@ public class ThumbsUpTextView extends View {
     }
 
     /**
+     * 当前的状态.TRUE:点赞;FALSE:未点赞.
+     */
+    private boolean thumbsUp = false;
+    /**
      * 点赞或取消点赞
      *
      * @param isUp TRUE:点赞;FALSE:取消点赞
@@ -96,9 +100,22 @@ public class ThumbsUpTextView extends View {
             Log.d(TAG, "thumbsUp: now, the animator is running, please wait a moment");
             return;
         }
+        thumbsUp = isUp;
         mCurrentValue = mCurrentValue + (isUp ? 1 : (-1));
         mNewTextStr = String.valueOf(mCurrentValue);
+        if (mTextStr.length() != mNewTextStr.length()) {
+//            ViewCompat.postInvalidateOnAnimation(this);
+            getParent().requestLayout();
+        }
         startAnimator(isUp);
+    }
+
+    /**
+     * 获取当前的状态
+     * @return
+     */
+    public boolean getThumbsUp() {
+        return thumbsUp;
     }
 
     /**
@@ -216,14 +233,16 @@ public class ThumbsUpTextView extends View {
     }
 
     private int measureWidth(int widthMeasureSpec) {
-        Log.d(TAG, "measureWidth: ");
         int result = 0;
         int mode = MeasureSpec.getMode(widthMeasureSpec);
         int size = MeasureSpec.getSize(widthMeasureSpec);
+        Log.d(TAG, "measureWidth: mode: "+mode+", size: "+size);
         if (mode == MeasureSpec.EXACTLY) {
             result = size;
         } else {
-            result = (int) (mTextPaint.measureText(mTextStr) + getPaddingLeft() + getPaddingRight() + 0.5f + (mTextStr.length() - 1) * mTextScaleX);
+            String maxLengthStr = mTextStr.length() > mNewTextStr.length()?mTextStr:mNewTextStr;
+            result = (int) (mTextPaint.measureText(maxLengthStr) + getPaddingLeft() + getPaddingRight() + 0.5f + (maxLengthStr.length() - 1) * mTextScaleX);
+            Log.d(TAG, "measureWidth: maxLengthStr: "+maxLengthStr+ ", result: "+result);
         }
         Log.d(TAG, "measureWidth: result: "+result);
         return result;
@@ -235,6 +254,7 @@ public class ThumbsUpTextView extends View {
         int result = 0;
         int mode = MeasureSpec.getMode(heightMeasureSpec);
         int size = MeasureSpec.getSize(heightMeasureSpec);
+        Log.d(TAG, "measureWidth measureHeight: mode: "+mode+", size: "+size);
         if (mode == MeasureSpec.EXACTLY) {
             result = size;
         } else {

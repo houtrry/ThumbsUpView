@@ -1,6 +1,7 @@
 package com.houtrry.thumbsupview;
 
 import android.animation.AnimatorSet;
+import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
@@ -71,16 +72,38 @@ public class ThumbsUpImageView extends FrameLayout {
                     .scaleX(1.0f)
                     .scaleY(1.0f)
                     .setDuration(mAnimatorDuration)
+                    .setStartDelay((long) (mAnimatorDuration*0.3f))
                     .setInterpolator(new LinearOutSlowInInterpolator());
         } else {
             mIvShiningView.animate().translationY(mShiningTranslationY).alpha(0f)
+                    .setStartDelay((long) (mAnimatorDuration*0.3f))
                     .scaleX(0f).scaleY(0f).setDuration(mAnimatorDuration).setInterpolator(new LinearOutSlowInInterpolator());
         }
 
 
-        PropertyValuesHolder likeObjectAnimatorScaleX = PropertyValuesHolder .ofFloat("scaleX", 0.6f, 1.2f, 1.0f);
 
-        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofFloat("scaleY", 0.6f, 1.2f, 1.0f);
+        // 在 0% 处开始
+        Keyframe scaleXKeyframe1 = Keyframe.ofFloat(0, 1.0f);
+        Keyframe scaleXKeyframe2 = Keyframe.ofFloat(0.2f, 0.6f);
+        // 时间经过 50% 的时候，动画完成度 100%
+        Keyframe scaleXKeyframe3 = Keyframe.ofFloat(0.5f, 1.0f);
+        // 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%
+        Keyframe scaleXKeyframe4 = Keyframe.ofFloat(0.8f, 1.4f);
+        Keyframe scaleXKeyframe5 = Keyframe.ofFloat(1, 1.0f);
+        PropertyValuesHolder likeObjectAnimatorScaleX = PropertyValuesHolder.ofKeyframe("scaleX", scaleXKeyframe1, scaleXKeyframe2, scaleXKeyframe3, scaleXKeyframe4, scaleXKeyframe5);
+
+
+        // 在 0% 处开始
+        Keyframe scaleYKeyframe1 = Keyframe.ofFloat(0, 1.0f);
+        Keyframe scaleYKeyframe2 = Keyframe.ofFloat(0.2f, 0.6f);
+        // 时间经过 50% 的时候，动画完成度 100%
+        Keyframe scaleYKeyframe3 = Keyframe.ofFloat(0.5f, 1.0f);
+        // 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%
+        Keyframe scaleYKeyframe4 = Keyframe.ofFloat(0.8f, 1.4f);
+        Keyframe scaleYKeyframe5 = Keyframe.ofFloat(1, 1.0f);
+        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofKeyframe("scaleY", scaleYKeyframe1, scaleYKeyframe2, scaleYKeyframe3, scaleYKeyframe4, scaleYKeyframe5);
+
+//        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofFloat("scaleY", 0.6f, 1.2f, 1.0f);
 
         ObjectAnimator likeObjectAnimatorAlpha = ObjectAnimator.ofFloat(mIvLikeView, "alpha", 1.0f, 0.0f, 1.0f);
         likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
