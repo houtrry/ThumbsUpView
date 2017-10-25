@@ -313,8 +313,8 @@ public class ThumbsUpTextView extends View {
                 //如果两个数字的第i个位置上数字相同, 则, 这个位置的Y值不需要变化, 新的数字也不需要画出
                 mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
                 mTextY = mHeight * 0.5f + mTextRect.height() * 0.5f;
-                canvas.drawText(textAtI, 0, mTextY, mTextPaint);
                 mTextPaint.setAlpha(255);
+                canvas.drawText(textAtI, 0, mTextY, mTextPaint);
             } else {
                 mTextPaint.getTextBounds(textAtI, 0, textAtI.length(), mTextRect);
                 mTextY = mHeight * 0.5f + mTextRect.height() * 0.5f + mHeight * progress;
