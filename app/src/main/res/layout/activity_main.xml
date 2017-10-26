@@ -2,7 +2,8 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:thumbs="http://schemas.android.com/apk/res-auto"
+    xmlns:thumbsText="http://schemas.android.com/apk/res-auto"
+    xmlns:thumbsImage="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,12 +19,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        thumbs:align_type="TYPE_LEFT"
-        thumbs:animator_duration="1000"
-        thumbs:default_value="999"
-        thumbs:text_color="@color/colorAccent"
-        thumbs:text_scale_x="1px"
-        thumbs:text_size="16sp"/>
+        thumbsText:align_type="TYPE_LEFT"
+        thumbsText:animator_duration="1000"
+        thumbsText:default_value="999"
+        thumbsText:text_color="@color/colorAccent"
+        thumbsText:text_scale_x="1px"
+        thumbsText:text_size="16sp"/>
 
     <Button
         android:id="@+id/thumbsUp"
@@ -72,6 +73,9 @@
             android:textAllCaps="false"
             android:textColor="@color/colorAccent"
             android:textSize="15sp"
+            thumbsImage:animation_duration="300"
+            thumbsImage:default_status="false"
+            thumbsImage:shining_translation_y="7dp"
             />
 
         <com.houtrry.thumbsupview.ThumbsUpTextView
@@ -79,11 +83,11 @@
             android:layout_width="45dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="2dp"
-            thumbs:align_type="TYPE_LEFT"
-            thumbs:animator_duration="1000"
-            thumbs:default_value="999"
-            thumbs:text_color="@color/colorAccent"
-            thumbs:text_scale_x="1px"
-            thumbs:text_size="16sp"/>
+            thumbsText:align_type="TYPE_LEFT"
+            thumbsText:animator_duration="1000"
+            thumbsText:default_value="999"
+            thumbsText:text_color="@color/colorAccent"
+            thumbsText:text_scale_x="1px"
+            thumbsText:text_size="16sp"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

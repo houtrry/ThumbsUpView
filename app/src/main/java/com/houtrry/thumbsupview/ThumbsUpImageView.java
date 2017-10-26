@@ -8,6 +8,8 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import static com.houtrry.thumbsupview.R.id.TYPE_LEFT;
 
 /**
  * @author: houtrry
@@ -29,6 +33,7 @@ public class ThumbsUpImageView extends FrameLayout {
     private ImageView mIvShiningView;
     private float mShiningTranslationY = 20;
     private long mAnimatorDuration = 300;
+    private boolean mThumbsUpImageViewStatus = false;
 
     public ThumbsUpImageView(Context context) {
         this(context, null);
@@ -44,13 +49,23 @@ public class ThumbsUpImageView extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        initAttrs(context, attrs);
         initChildViews(context);
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThumbsUpImageView);
+        mShiningTranslationY = typedArray.getDimensionPixelSize(R.styleable.ThumbsUpImageView_shining_translation_y, 45);
+        mAnimatorDuration = typedArray.getInt(R.styleable.ThumbsUpImageView_animation_duration, 1000);
+        mThumbsUpImageViewStatus = typedArray.getBoolean(R.styleable.ThumbsUpImageView_default_status, false);
+        typedArray.recycle();
     }
 
     private void initChildViews(Context context) {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_thumbsup, this, true);
         mIvLikeView = view.findViewById(R.id.iv_like);
         mIvShiningView = view.findViewById(R.id.iv_shining);
+        changeImageNoAnimator();
     }
 
     /**
@@ -58,16 +73,17 @@ public class ThumbsUpImageView extends FrameLayout {
      * @param needAnimator true: 需要动画; false: 不需要动画
      */
     public void thumbs(boolean isUp, boolean needAnimator) {
+        mThumbsUpImageViewStatus = isUp;
         if (needAnimator) {
-            changeImageWithAnimator(isUp);
+            changeImageWithAnimator();
         } else {
-            changeImageNoAnimator(isUp);
+            changeImageNoAnimator();
         }
     }
 
-    private void changeImageWithAnimator(final boolean isUp) {
+    private void changeImageWithAnimator() {
 
-        if (isUp) {
+        if (mThumbsUpImageViewStatus) {
             mIvShiningView.animate()
                     .translationY(0)
                     .alpha(1.0f)
@@ -86,22 +102,22 @@ public class ThumbsUpImageView extends FrameLayout {
 
         // 在 0% 处开始
         Keyframe scaleXKeyframe1 = Keyframe.ofFloat(0, 1.0f);
-        Keyframe scaleXKeyframe2 = Keyframe.ofFloat(0.2f, 0.6f);
+        Keyframe scaleXKeyframe2 = Keyframe.ofFloat(0.2f, 0.8f);
         // 时间经过 50% 的时候，动画完成度 100%
         Keyframe scaleXKeyframe3 = Keyframe.ofFloat(0.5f, 1.0f);
         // 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%
-        Keyframe scaleXKeyframe4 = Keyframe.ofFloat(0.8f, 1.4f);
+        Keyframe scaleXKeyframe4 = Keyframe.ofFloat(0.8f, 1.2f);
         Keyframe scaleXKeyframe5 = Keyframe.ofFloat(1, 1.0f);
         PropertyValuesHolder likeObjectAnimatorScaleX = PropertyValuesHolder.ofKeyframe("scaleX", scaleXKeyframe1, scaleXKeyframe2, scaleXKeyframe3, scaleXKeyframe4, scaleXKeyframe5);
 
 
         // 在 0% 处开始
         Keyframe scaleYKeyframe1 = Keyframe.ofFloat(0, 1.0f);
-        Keyframe scaleYKeyframe2 = Keyframe.ofFloat(0.2f, 0.6f);
+        Keyframe scaleYKeyframe2 = Keyframe.ofFloat(0.2f, 0.8f);
         // 时间经过 50% 的时候，动画完成度 100%
         Keyframe scaleYKeyframe3 = Keyframe.ofFloat(0.5f, 1.0f);
         // 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%
-        Keyframe scaleYKeyframe4 = Keyframe.ofFloat(0.8f, 1.4f);
+        Keyframe scaleYKeyframe4 = Keyframe.ofFloat(0.8f, 1.2f);
         Keyframe scaleYKeyframe5 = Keyframe.ofFloat(1, 1.0f);
         PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofKeyframe("scaleY", scaleYKeyframe1, scaleYKeyframe2, scaleYKeyframe3, scaleYKeyframe4, scaleYKeyframe5);
 
@@ -115,7 +131,7 @@ public class ThumbsUpImageView extends FrameLayout {
             public void onAnimationRepeat(Animator animation) {
                 super.onAnimationRepeat(animation);
                 Log.d(TAG, "onAnimationUpdate onAnimationRepeat: ");
-                mIvLikeView.setSelected(isUp);
+                mIvLikeView.setSelected(mThumbsUpImageViewStatus);
             }
         });
 //        likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -145,12 +161,14 @@ public class ThumbsUpImageView extends FrameLayout {
 
         AnimatorSet animatorSetLike = new AnimatorSet ();
         animatorSetLike.play(animator).with(likeObjectAnimatorAlpha);
+        Log.d(TAG, "changeImageWithAnimator: mAnimatorDuration: " +mAnimatorDuration);
+        animatorSetLike.setDuration(mAnimatorDuration);
         animatorSetLike.start();
     }
 
-    private void changeImageNoAnimator(boolean isUp) {
-        mIvShiningView.setTranslationY(isUp ? 0 : mShiningTranslationY);
-        mIvShiningView.setAlpha(isUp ? 1.0f : 0f);
-        mIvLikeView.setSelected(isUp);
+    private void changeImageNoAnimator() {
+        mIvShiningView.setTranslationY(mThumbsUpImageViewStatus ? 0 : mShiningTranslationY);
+        mIvShiningView.setAlpha(mThumbsUpImageViewStatus ? 1.0f : 0f);
+        mIvLikeView.setSelected(mThumbsUpImageViewStatus);
     }
 }

@@ -19,4 +19,9 @@
         <!--动画时长-->
         <attr name="animator_duration" format="integer"/>
     </declare-styleable>
+    <declare-styleable name="ThumbsUpImageView">
+        <attr name="animation_duration" format="integer"/>
+        <attr name="default_status" format="boolean"/>
+        <attr name="shining_translation_y" format="dimension"/>
+    </declare-styleable>
 </resources>
