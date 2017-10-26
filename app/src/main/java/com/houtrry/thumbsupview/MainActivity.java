@@ -10,6 +10,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * @author houtrry
+ */
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.thumbsUpTextView)
@@ -22,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     ThumbsUpImageView mThumbsImageView;
     @BindView(R.id.thumbsUpTextViewLike)
     ThumbsUpTextView mThumbsUpTextViewLike;
-    @BindView(R.id.ll_like)
+    @BindView(R.id.ll_like_image)
     LinearLayout mLlLike;
 
     @Override
@@ -33,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    boolean isUp = false;
-    @OnClick({R.id.thumbsUp, R.id.thumbsDown, R.id.ll_like})
+    private boolean isUp = false;
+    @OnClick({R.id.thumbsUp, R.id.thumbsDown, R.id.ll_like_image})
     public void click(View view) {
         final int viewId = view.getId();
         if (viewId == R.id.thumbsUp) {
             mThumbsUpTextView.thumbsUp(true);
         } else if (viewId == R.id.thumbsDown) {
             mThumbsUpTextView.thumbsUp(false);
-        } else if (viewId == R.id.ll_like) {
+        } else if (viewId == R.id.ll_like_image) {
             isUp = !isUp;
             mThumbsImageView.thumbs(isUp, true);
             mThumbsUpTextViewLike.thumbsUp(isUp);

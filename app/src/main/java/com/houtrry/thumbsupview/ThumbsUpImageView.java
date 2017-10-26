@@ -1,5 +1,7 @@
 package com.houtrry.thumbsupview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
@@ -105,21 +107,32 @@ public class ThumbsUpImageView extends FrameLayout {
 
 //        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofFloat("scaleY", 0.6f, 1.2f, 1.0f);
 
-        ObjectAnimator likeObjectAnimatorAlpha = ObjectAnimator.ofFloat(mIvLikeView, "alpha", 1.0f, 0.0f, 1.0f);
-        likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        ObjectAnimator likeObjectAnimatorAlpha = ObjectAnimator.ofFloat(mIvLikeView, "alpha", 1.0f, 0.5f);
+        likeObjectAnimatorAlpha.setRepeatCount(1);
+        likeObjectAnimatorAlpha.setRepeatMode(ValueAnimator.REVERSE);
+        likeObjectAnimatorAlpha.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float value = (float) valueAnimator.getAnimatedValue();
-                if (value == 0f) {
-                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 赶紧换图片哇~");
-                }
-                float animatedFraction = valueAnimator.getAnimatedFraction();
-                if (animatedFraction == 0.5f) {
-                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 你还在等啥~");
-                    mIvLikeView.setSelected(isUp);
-                }
+            public void onAnimationRepeat(Animator animation) {
+                super.onAnimationRepeat(animation);
+                Log.d(TAG, "onAnimationUpdate onAnimationRepeat: ");
+                mIvLikeView.setSelected(isUp);
             }
         });
+//        likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                Log.d(TAG, "onAnimationUpdate: "+valueAnimator.getAnimatedValue()+", "+valueAnimator.getAnimatedFraction());
+//                float value = (float) valueAnimator.getAnimatedValue();
+//                if (value == 0f) {
+//                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 赶紧换图片哇~");
+//                }
+//                float animatedFraction = valueAnimator.getAnimatedFraction();
+//                if (animatedFraction == 0.5f) {
+//                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 你还在等啥~");
+//                    mIvLikeView.setSelected(isUp);
+//                }
+//            }
+//        });
 //        likeObjectAnimatorAlpha.addListener(new AnimatorListenerAdapter() {
 //            @Override
 //            public void onAnimationRepeat(Animator animation) {
