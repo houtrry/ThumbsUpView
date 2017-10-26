@@ -23,5 +23,6 @@
         <attr name="animation_duration" format="integer"/>
         <attr name="default_status" format="boolean"/>
         <attr name="shining_translation_y" format="dimension"/>
+        <attr name="zoom_offset" format="float"/>
     </declare-styleable>
 </resources>

@@ -9,7 +9,6 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,8 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
-import static com.houtrry.thumbsupview.R.id.TYPE_LEFT;
 
 /**
  * @author: houtrry
@@ -31,9 +28,23 @@ public class ThumbsUpImageView extends FrameLayout {
     private static final String TAG = ThumbsUpImageView.class.getSimpleName();
     private ImageView mIvLikeView;
     private ImageView mIvShiningView;
+    /**
+     * 动画时shining在y轴上移动的距离
+     */
     private float mShiningTranslationY = 20;
+    /**
+     * 动画时长
+     */
     private long mAnimatorDuration = 300;
-    private boolean mThumbsUpImageViewStatus = false;
+    /**
+     * 当前的状态
+     */
+    private boolean mThumbsUp = false;
+    /**
+     * 图片放大缩小的偏差
+     * 由1.0f减小mZoomOffset()比如0.2这么多, 变成最小的时候1-mZoomOffset(0.8), 最大的时候1+mZoomOffset(1.2)
+     */
+    private float mZoomOffset = 0.2f;
 
     public ThumbsUpImageView(Context context) {
         this(context, null);
@@ -57,7 +68,8 @@ public class ThumbsUpImageView extends FrameLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThumbsUpImageView);
         mShiningTranslationY = typedArray.getDimensionPixelSize(R.styleable.ThumbsUpImageView_shining_translation_y, 45);
         mAnimatorDuration = typedArray.getInt(R.styleable.ThumbsUpImageView_animation_duration, 1000);
-        mThumbsUpImageViewStatus = typedArray.getBoolean(R.styleable.ThumbsUpImageView_default_status, false);
+        mThumbsUp = typedArray.getBoolean(R.styleable.ThumbsUpImageView_default_status, false);
+        mZoomOffset = typedArray.getFloat(R.styleable.ThumbsUpImageView_zoom_offset, 0.2f);
         typedArray.recycle();
     }
 
@@ -73,7 +85,7 @@ public class ThumbsUpImageView extends FrameLayout {
      * @param needAnimator true: 需要动画; false: 不需要动画
      */
     public void thumbs(boolean isUp, boolean needAnimator) {
-        mThumbsUpImageViewStatus = isUp;
+        mThumbsUp = isUp;
         if (needAnimator) {
             changeImageWithAnimator();
         } else {
@@ -81,47 +93,55 @@ public class ThumbsUpImageView extends FrameLayout {
         }
     }
 
+    /**
+     * 返回当前的状态
+     *
+     * @return
+     */
+    public boolean isThumbsUp() {
+        return mThumbsUp;
+    }
+
     private void changeImageWithAnimator() {
 
-        if (mThumbsUpImageViewStatus) {
+        if (mThumbsUp) {
             mIvShiningView.animate()
                     .translationY(0)
                     .alpha(1.0f)
                     .scaleX(1.0f)
                     .scaleY(1.0f)
                     .setDuration(mAnimatorDuration)
-                    .setStartDelay((long) (mAnimatorDuration*0.3f))
+                    .setStartDelay((long) (mAnimatorDuration * 0.3f))
                     .setInterpolator(new LinearOutSlowInInterpolator());
         } else {
             mIvShiningView.animate().translationY(mShiningTranslationY).alpha(0f)
-                    .setStartDelay((long) (mAnimatorDuration*0.3f))
+                    .setStartDelay((long) (mAnimatorDuration * 0.3f))
                     .scaleX(0f).scaleY(0f).setDuration(mAnimatorDuration).setInterpolator(new LinearOutSlowInInterpolator());
         }
 
 
-
         // 在 0% 处开始
         Keyframe scaleXKeyframe1 = Keyframe.ofFloat(0, 1.0f);
-        Keyframe scaleXKeyframe2 = Keyframe.ofFloat(0.2f, 0.8f);
+        Keyframe scaleXKeyframe2 = Keyframe.ofFloat(0.2f, 1 - mZoomOffset);
         // 时间经过 50% 的时候，动画完成度 100%
         Keyframe scaleXKeyframe3 = Keyframe.ofFloat(0.5f, 1.0f);
         // 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%
-        Keyframe scaleXKeyframe4 = Keyframe.ofFloat(0.8f, 1.2f);
+        Keyframe scaleXKeyframe4 = Keyframe.ofFloat(0.8f, 1 + mZoomOffset);
         Keyframe scaleXKeyframe5 = Keyframe.ofFloat(1, 1.0f);
         PropertyValuesHolder likeObjectAnimatorScaleX = PropertyValuesHolder.ofKeyframe("scaleX", scaleXKeyframe1, scaleXKeyframe2, scaleXKeyframe3, scaleXKeyframe4, scaleXKeyframe5);
 
 
         // 在 0% 处开始
         Keyframe scaleYKeyframe1 = Keyframe.ofFloat(0, 1.0f);
-        Keyframe scaleYKeyframe2 = Keyframe.ofFloat(0.2f, 0.8f);
+        Keyframe scaleYKeyframe2 = Keyframe.ofFloat(0.2f, 1 - mZoomOffset);
         // 时间经过 50% 的时候，动画完成度 100%
         Keyframe scaleYKeyframe3 = Keyframe.ofFloat(0.5f, 1.0f);
         // 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%
-        Keyframe scaleYKeyframe4 = Keyframe.ofFloat(0.8f, 1.2f);
+        Keyframe scaleYKeyframe4 = Keyframe.ofFloat(0.8f, 1 + mZoomOffset);
         Keyframe scaleYKeyframe5 = Keyframe.ofFloat(1, 1.0f);
         PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofKeyframe("scaleY", scaleYKeyframe1, scaleYKeyframe2, scaleYKeyframe3, scaleYKeyframe4, scaleYKeyframe5);
 
-//        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofFloat("scaleY", 0.6f, 1.2f, 1.0f);
+        //        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofFloat("scaleY", 0.6f, 1.2f, 1.0f);
 
         ObjectAnimator likeObjectAnimatorAlpha = ObjectAnimator.ofFloat(mIvLikeView, "alpha", 1.0f, 0.5f);
         likeObjectAnimatorAlpha.setRepeatCount(1);
@@ -131,44 +151,44 @@ public class ThumbsUpImageView extends FrameLayout {
             public void onAnimationRepeat(Animator animation) {
                 super.onAnimationRepeat(animation);
                 Log.d(TAG, "onAnimationUpdate onAnimationRepeat: ");
-                mIvLikeView.setSelected(mThumbsUpImageViewStatus);
+                mIvLikeView.setSelected(mThumbsUp);
             }
         });
-//        likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                Log.d(TAG, "onAnimationUpdate: "+valueAnimator.getAnimatedValue()+", "+valueAnimator.getAnimatedFraction());
-//                float value = (float) valueAnimator.getAnimatedValue();
-//                if (value == 0f) {
-//                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 赶紧换图片哇~");
-//                }
-//                float animatedFraction = valueAnimator.getAnimatedFraction();
-//                if (animatedFraction == 0.5f) {
-//                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 你还在等啥~");
-//                    mIvLikeView.setSelected(isUp);
-//                }
-//            }
-//        });
-//        likeObjectAnimatorAlpha.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationRepeat(Animator animation) {
-//                super.onAnimationRepeat(animation);
-//                Log.d(TAG, "onAnimationUpdate: 天啊撸, 现在是个好机会~");
-//                mIvLikeView.setSelected(isUp);
-//            }
-//        });
+        //        likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        //            @Override
+        //            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+        //                Log.d(TAG, "onAnimationUpdate: "+valueAnimator.getAnimatedValue()+", "+valueAnimator.getAnimatedFraction());
+        //                float value = (float) valueAnimator.getAnimatedValue();
+        //                if (value == 0f) {
+        //                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 赶紧换图片哇~");
+        //                }
+        //                float animatedFraction = valueAnimator.getAnimatedFraction();
+        //                if (animatedFraction == 0.5f) {
+        //                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 你还在等啥~");
+        //                    mIvLikeView.setSelected(isUp);
+        //                }
+        //            }
+        //        });
+        //        likeObjectAnimatorAlpha.addListener(new AnimatorListenerAdapter() {
+        //            @Override
+        //            public void onAnimationRepeat(Animator animation) {
+        //                super.onAnimationRepeat(animation);
+        //                Log.d(TAG, "onAnimationUpdate: 天啊撸, 现在是个好机会~");
+        //                mIvLikeView.setSelected(isUp);
+        //            }
+        //        });
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mIvLikeView, likeObjectAnimatorScaleX, likeObjectAnimatorScaleY);
 
-        AnimatorSet animatorSetLike = new AnimatorSet ();
+        AnimatorSet animatorSetLike = new AnimatorSet();
         animatorSetLike.play(animator).with(likeObjectAnimatorAlpha);
-        Log.d(TAG, "changeImageWithAnimator: mAnimatorDuration: " +mAnimatorDuration);
+        Log.d(TAG, "changeImageWithAnimator: mAnimatorDuration: " + mAnimatorDuration);
         animatorSetLike.setDuration(mAnimatorDuration);
         animatorSetLike.start();
     }
 
     private void changeImageNoAnimator() {
-        mIvShiningView.setTranslationY(mThumbsUpImageViewStatus ? 0 : mShiningTranslationY);
-        mIvShiningView.setAlpha(mThumbsUpImageViewStatus ? 1.0f : 0f);
-        mIvLikeView.setSelected(mThumbsUpImageViewStatus);
+        mIvShiningView.setTranslationY(mThumbsUp ? 0 : mShiningTranslationY);
+        mIvShiningView.setAlpha(mThumbsUp ? 1.0f : 0f);
+        mIvLikeView.setSelected(mThumbsUp);
     }
 }
