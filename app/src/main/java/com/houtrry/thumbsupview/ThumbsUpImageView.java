@@ -103,7 +103,6 @@ public class ThumbsUpImageView extends FrameLayout {
     }
 
     private void changeImageWithAnimator() {
-
         if (mThumbsUp) {
             mIvShiningView.animate()
                     .translationY(0)
@@ -118,7 +117,6 @@ public class ThumbsUpImageView extends FrameLayout {
                     .setStartDelay((long) (mAnimatorDuration * 0.3f))
                     .scaleX(0f).scaleY(0f).setDuration(mAnimatorDuration).setInterpolator(new LinearOutSlowInInterpolator());
         }
-
 
         // 在 0% 处开始
         Keyframe scaleXKeyframe1 = Keyframe.ofFloat(0, 1.0f);
@@ -141,8 +139,6 @@ public class ThumbsUpImageView extends FrameLayout {
         Keyframe scaleYKeyframe5 = Keyframe.ofFloat(1, 1.0f);
         PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofKeyframe("scaleY", scaleYKeyframe1, scaleYKeyframe2, scaleYKeyframe3, scaleYKeyframe4, scaleYKeyframe5);
 
-        //        PropertyValuesHolder likeObjectAnimatorScaleY = PropertyValuesHolder.ofFloat("scaleY", 0.6f, 1.2f, 1.0f);
-
         ObjectAnimator likeObjectAnimatorAlpha = ObjectAnimator.ofFloat(mIvLikeView, "alpha", 1.0f, 0.5f);
         likeObjectAnimatorAlpha.setRepeatCount(1);
         likeObjectAnimatorAlpha.setRepeatMode(ValueAnimator.REVERSE);
@@ -154,29 +150,6 @@ public class ThumbsUpImageView extends FrameLayout {
                 mIvLikeView.setSelected(mThumbsUp);
             }
         });
-        //        likeObjectAnimatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-        //            @Override
-        //            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-        //                Log.d(TAG, "onAnimationUpdate: "+valueAnimator.getAnimatedValue()+", "+valueAnimator.getAnimatedFraction());
-        //                float value = (float) valueAnimator.getAnimatedValue();
-        //                if (value == 0f) {
-        //                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 赶紧换图片哇~");
-        //                }
-        //                float animatedFraction = valueAnimator.getAnimatedFraction();
-        //                if (animatedFraction == 0.5f) {
-        //                    Log.d(TAG, "onAnimationUpdate: 天啊撸, 你还在等啥~");
-        //                    mIvLikeView.setSelected(isUp);
-        //                }
-        //            }
-        //        });
-        //        likeObjectAnimatorAlpha.addListener(new AnimatorListenerAdapter() {
-        //            @Override
-        //            public void onAnimationRepeat(Animator animation) {
-        //                super.onAnimationRepeat(animation);
-        //                Log.d(TAG, "onAnimationUpdate: 天啊撸, 现在是个好机会~");
-        //                mIvLikeView.setSelected(isUp);
-        //            }
-        //        });
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mIvLikeView, likeObjectAnimatorScaleX, likeObjectAnimatorScaleY);
 
         AnimatorSet animatorSetLike = new AnimatorSet();

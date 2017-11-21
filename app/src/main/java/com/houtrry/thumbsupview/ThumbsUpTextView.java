@@ -232,6 +232,12 @@ public class ThumbsUpTextView extends View {
 //        canvas.drawLine(0, mHeight*0.5f, mWidth, mHeight*0.5f, mTextPaint);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        clearAnimator();
+    }
+
     private int measureWidth(int widthMeasureSpec) {
         int result = 0;
         int mode = MeasureSpec.getMode(widthMeasureSpec);
@@ -358,9 +364,7 @@ public class ThumbsUpTextView extends View {
      * @param isUp true:点赞动画;false:取消点赞的动画.
      */
     private void startAnimator(boolean isUp) {
-        if (mObjectAnimator != null && mObjectAnimator.isRunning()) {
-            mObjectAnimator.cancel();
-        }
+        clearAnimator();
         mObjectAnimator = ObjectAnimator.ofFloat(this, "progress", 0, isUp ? -1f : 1f);
         mObjectAnimator.setDuration(mAnimatorDuration);
         mObjectAnimator.addListener(new Animator.AnimatorListener() {
@@ -420,5 +424,11 @@ public class ThumbsUpTextView extends View {
     public static String reverseString(String text) {
         StringBuilder sb = new StringBuilder(text);
         return sb.reverse().toString();
+    }
+
+    private void clearAnimator() {
+        if (mObjectAnimator != null && mObjectAnimator.isRunning()) {
+            mObjectAnimator.cancel();
+        }
     }
 }
